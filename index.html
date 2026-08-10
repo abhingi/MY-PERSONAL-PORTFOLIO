@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Abhishek Negi - Personal Portfolio</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts import -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- GSAP & ScrollTrigger Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <style>
+        :root {
+            /* Glowing Light Pink & Rose Palette */
+            --primary-color: #e11d48;       /* Vibrant Rose Pink */
+            --primary-hover: #be123c;       /* Deep Rose */
+            --accent: #fb7185;              /* Light Coral Pink */
+            --accent-light: #fff1f2;        /* Soft Pastel Pink Tint */
+            --bg-color: #fdf2f8;            /* Very Light Blush Background */
+            --bg-alt: #fce7f3;              /* Soft Lavender-Pink Alternate */
+            --card-bg: #ffffff;            /* Pure Glowing White */
+            --text-main: #1f2937;          /* Charcoal Dark */
+            --text-muted: #4b5563;         /* Muted Gray */
+            --border-color: rgba(251, 113, 133, 0.25);
+            
+            /* Glowing Box Shadows - Pink Edition */
+            --white-glow-sm: 0 0 15px rgba(255, 255, 255, 0.9), 0 4px 12px rgba(225, 29, 72, 0.06);
+            --white-glow-md: 0 0 25px rgba(255, 255, 255, 1), 0 10px 25px rgba(225, 29, 72, 0.12);
+            --pink-glow: 0 0 20px rgba(244, 63, 94, 0.35);
+            --rose-glow: 0 0 25px rgba(251, 113, 133, 0.45);
+            
+            /* Typography */
+            --font-heading: 'Outfit', sans-serif;
+            --font-body: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: var(--font-body);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4, .logo {
+            font-family: var(--font-heading);
+            letter-spacing: -0.02em;
+        }
+
+        /* Animated Background Canvas */
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(16px);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.2rem 8%;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: var(--white-glow-sm);
+        }
+
+        .logo {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: var(--text-main);
+            text-decoration: none;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+        }
+
+        .logo span { color: var(--primary-color); }
+
+        /* Menu Toggle Button (Icon) */
+        .menu-btn {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            color: var(--primary-color);
+            font-size: 1.3rem;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: var(--white-glow-sm);
+            transition: 0.3s ease;
+            z-index: 1001;
+        }
+
+        .menu-btn:hover {
+            transform: scale(1.08);
+            box-shadow: var(--white-glow-md), var(--pink-glow);
+            background: var(--primary-color);
+            color: #ffffff;
+        }
+
+        /* Compact Top-Right Side Dropdown Menu */
+        .navbar {
+            position: fixed;
+            top: 75px;
+            right: 8%;
+            width: 220px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 16px;
+            padding: 1rem 0;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid rgba(251, 113, 133, 0.3);
+            box-shadow: 0 10px 30px rgba(225, 29, 72, 0.15), var(--white-glow-md);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px) scale(0.95);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1000;
+        }
+
+        /* Open State for Compact Menu */
+        .navbar.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0) scale(1);
+        }
+
+        .navbar a {
+            color: var(--text-main);
+            text-decoration: none;
+            padding: 0.7rem 1.4rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: 0.2s ease;
+            display: flex;
+            align-items: center;
+            border-left: 3px solid transparent;
+        }
+
+        .navbar a:hover { 
+            color: var(--primary-color); 
+            background: var(--accent-light);
+            border-left-color: var(--primary-color);
+            padding-left: 1.7rem;
+        }
+
+        .section {
+            padding: 6rem 8% 4rem;
+        }
+
+        /* Home Section */
+        .home {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 2rem;
+            position: relative;
+        }
+
+        .home-content h1 { font-size: 3.2rem; margin-bottom: 0.5rem; color: var(--text-main); font-weight: 800; }
+        .home-content h3 { font-size: 1.6rem; color: var(--primary-color); margin-bottom: 1rem; font-weight: 700; }
+        .home-content p { color: var(--text-muted); max-width: 600px; margin-bottom: 1.8rem; font-size: 1.05rem; }
+
+        .btn-box { display: flex; gap: 1rem; }
+        .btn {
+            padding: 0.8rem 1.8rem;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: 0.3s ease;
+            display: inline-block;
+            font-family: var(--font-body);
+        }
+
+        .primary-btn { 
+            background: var(--primary-color); 
+            color: white; 
+            box-shadow: var(--pink-glow);
+        }
+        .primary-btn:hover { 
+            background: var(--primary-hover); 
+            transform: translateY(-3px); 
+            box-shadow: 0 0 25px rgba(225, 29, 72, 0.5);
+        }
+        
+        .secondary-btn { 
+            background: var(--card-bg);
+            border: 1px solid var(--border-color); 
+            color: var(--text-main); 
+            box-shadow: var(--white-glow-sm);
+        }
+        .secondary-btn:hover { 
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+            transform: translateY(-3px); 
+            box-shadow: var(--white-glow-md);
+        }
+
+        /* Profile Image Container Styling */
+        .home-image {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .home-image img {
+            width: 320px;
+            height: 320px;
+            max-width: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            object-position: center top;
+            display: block;
+            border: 6px solid var(--card-bg);
+            box-shadow: 0 0 30px rgba(255, 255, 255, 1), var(--rose-glow);
+            transition: transform 0.5s ease, box-shadow 0.5s ease;
+        }
+
+        .home-image img:hover {
+            transform: scale(1.03) rotate(2deg);
+            box-shadow: 0 0 40px rgba(255, 255, 255, 1), 0 0 30px rgba(244, 63, 94, 0.5);
+        }
+
+        /* Skills Section */
+        .badge-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+            margin-top: 0.8rem;
+            margin-bottom: 1.8rem;
+        }
+
+        .badge {
+            background: #ffffff;
+            color: #be123c;
+            font-weight: 600;
+            padding: 0.4rem 0.9rem;
+            border-radius: 30px;
+            font-size: 0.88rem;
+            border: 1px solid #ffe4e6;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.9), 0 2px 6px rgba(244, 63, 94, 0.1);
+            transition: 0.3s;
+        }
+
+        .badge:hover {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+            box-shadow: var(--pink-glow);
+        }
+
+        /* Experience & Projects Grid */
+        .projects-grid, .timeline {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .card {
+            background: var(--card-bg);
+            padding: 2.2rem;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: var(--white-glow-sm);
+            transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .card:hover {
+            transform: translateY(-7px);
+            border-color: rgba(244, 63, 94, 0.4);
+            box-shadow: var(--white-glow-md), 0 0 18px rgba(244, 63, 94, 0.15);
+        }
+
+        .card h3 { color: var(--text-main); margin-bottom: 0.4rem; font-size: 1.3rem; }
+        .card .subtitle { color: var(--primary-color); font-weight: 600; font-size: 0.92rem; margin-bottom: 1rem; }
+        .card p, .card ul { color: var(--text-muted); font-size: 0.96rem; margin-bottom: 1rem; }
+        .card ul { padding-left: 1.2rem; }
+        .card ul li { margin-bottom: 0.5rem; }
+
+        /* Tables */
+        .table-container {
+            overflow-x: auto;
+            margin-top: 2rem;
+            background: var(--card-bg);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: var(--white-glow-sm);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 1.1rem 1.5rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th { 
+            background: var(--bg-alt); 
+            color: var(--text-main); 
+            font-family: var(--font-heading);
+            font-weight: 700;
+        }
+
+        /* Contact Section */
+        .contact-info-box {
+            display: flex;
+            justify-content: center;
+            gap: 2.5rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .contact-info-box div {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            background: var(--card-bg);
+            padding: 0.6rem 1.2rem;
+            border-radius: 30px;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--white-glow-sm);
+        }
+
+        .contact-form {
+            max-width: 600px;
+            margin: 2.5rem auto 0;
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 1.1rem;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            color: var(--text-main);
+            outline: none;
+            font-family: var(--font-body);
+            transition: 0.3s;
+            box-shadow: var(--white-glow-sm);
+        }
+
+        .form-group input:focus, .form-group textarea:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 15px rgba(225, 29, 72, 0.2), var(--white-glow-md);
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .social-links a {
+            color: var(--text-muted);
+            font-size: 1.6rem;
+            transition: 0.3s;
+            background: var(--card-bg);
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--white-glow-sm);
+        }
+
+        .social-links a:hover { 
+            color: var(--primary-color); 
+            border-color: var(--primary-color);
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: var(--white-glow-md), var(--pink-glow);
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            background: var(--bg-alt);
+            border-top: 1px solid var(--border-color);
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .section-title {
+            font-size: 2.4rem;
+            text-align: center;
+            margin-bottom: 0.5rem;
+            color: var(--text-main);
+            font-weight: 800;
+        }
+
+        hr { border: 0; height: 1px; background: var(--border-color); margin: 3rem 0; }
+
+        @media (max-width: 768px) {
+            .home {
+                flex-direction: column-reverse;
+                text-align: center;
+            }
+            .btn-box {
+                justify-content: center;
+            }
+            .home-image img {
+                width: 240px;
+                height: 240px;
+            }
+            .navbar {
+                right: 5%;
+                width: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Animated Particle Canvas Overlay -->
+    <canvas id="bg-canvas"></canvas>
+
+    <header class="header">
+        <a href="#" class="logo">Abhishek <span>Negi</span></a>
+        
+        <!-- Menu Icon Trigger -->
+        <button class="menu-btn" id="menuToggle" aria-label="Toggle navigation">
+            <i class="fas fa-bars" id="menuIcon"></i>
+        </button>
+
+        <!-- Compact Top-Right Dropdown Navbar -->
+        <nav class="navbar" id="navMenu">
+            <a href="#home"><i class="fas fa-home" style="margin-right: 8px;"></i> Home</a>
+            <a href="#experience"><i class="fas fa-briefcase" style="margin-right: 8px;"></i> Experience</a>
+            <a href="#skills"><i class="fas fa-code" style="margin-right: 8px;"></i> Skills</a>
+            <a href="#projects"><i class="fas fa-project-diagram" style="margin-right: 8px;"></i> Projects</a>
+            <a href="#courses"><i class="fas fa-certificate" style="margin-right: 8px;"></i> Certifications</a>
+            <a href="#education"><i class="fas fa-graduation-cap" style="margin-right: 8px;"></i> Education</a>
+            <a href="#contact"><i class="fas fa-envelope" style="margin-right: 8px;"></i> Contact</a>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Home / Overview Section -->
+        <section class="section home" id="home">
+            <div class="home-content">
+                <h1 class="gsap-hero-title">Hello, I'm Abhishek Negi</h1>
+                <h3 class="gsap-hero-subtitle">Full Stack Web Developer & Data Analyst</h3>
+                <p class="gsap-hero-text">Passionate about engineering full-stack web applications, real-time data streaming architectures, exploratory data analytics, and machine learning pipelines. Dedicated to building scalable systems and interactive visual dashboards.</p>
+                <div class="btn-box gsap-hero-btn">
+                    <a href="#contact" class="btn primary-btn">Get In Touch</a>
+                    <a href="Work-Abhishek_Negi_Resume.pdf" class="btn secondary-btn" download>Download CV</a>
+                </div>
+            </div>
+            <div class="home-image gsap-hero-img">
+                <img src="Abhi.jpg" alt="Abhishek Negi">
+            </div>
+        </section>
+
+        <hr>
+
+        <!-- Work Experience Section -->
+        <section class="section" id="experience">
+            <h2 class="section-title gsap-reveal">Work Experience</h2>
+            <div class="timeline">
+                <div class="card gsap-reveal">
+                    <div>
+                        <h3>Web Development Intern</h3>
+                        <div class="subtitle">ALPHA Innovation Company | Nov 2025 – Jan 2026</div>
+                        <ul>
+                            <li>Developed and deployed 3 responsive frontend interfaces using HTML5, CSS3, JavaScript, and REST APIs, reducing average page load time by 30% by optimizing asset delivery and component structure.</li>
+                            <li>Improved UI/UX consistency across 2 client projects, achieving a 40% reduction in design revision cycles by implementing structured prototyping workflows.</li>
+                            <li>Integrated MongoDB database with frontend dashboards, enabling seamless data rendering for 500+ product entries by building efficient Fetch/Axios API pipelines.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="card gsap-reveal">
+                    <div>
+                        <h3>Machine Learning Intern</h3>
+                        <div class="subtitle">Internshala | Feb 2026 – Apr 2026</div>
+                        <ul>
+                            <li>Dual Certified by <strong>IIT Madras Pravartak & NSDC</strong> in AI/ML solutions and Data Analysis.</li>
+                            <li>Built 2 automated AI/ML pipelines for industrial data analysis, improving processing efficiency by 25% by applying Exploratory Data Analysis (EDA) and data modeling techniques using Python (Pandas, NumPy).</li>
+                            <li>Delivered Power BI visualization dashboards tracking 10+ KPIs for industrial datasets, achieving full stakeholder sign-off by leveraging statistical analysis methods.</li>
+                            <li>Reduced manual data preprocessing time by 35% by writing reusable Python scripts for data cleaning and transformation pipelines.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <hr>
+
+        <!-- Skills & Technical Summary Section -->
+        <section class="section" id="skills">
+            <h2 class="section-title gsap-reveal">Skills & Technologies Summary</h2>
+            
+            <h3 class="gsap-reveal" style="color: var(--primary-color); margin-top: 1rem;">Programming Languages & Core Competencies</h3>
+            <div class="badge-container gsap-reveal">
+                <span class="badge">Python (NumPy, Pandas)</span>
+                <span class="badge">JavaScript (ES6+)</span>
+                <span class="badge">C++</span>
+                <span class="badge">C Programming</span>
+                <span class="badge">Java</span>
+                <span class="badge">HTML5 & CSS3</span>
+                <span class="badge">Full Stack Development</span>
+                <span class="badge">Exploratory Data Analysis (EDA)</span>
+                <span class="badge">Data Cleaning & Transformation</span>
+                <span class="badge">Data Visualization</span>
+                <span class="badge">Debugging & Optimization</span>
+            </div>
+
+            <h3 class="gsap-reveal" style="color: var(--primary-color);">Frameworks, Databases & Developer Tools</h3>
+            <div class="badge-container gsap-reveal">
+                <span class="badge">React.js</span>
+                <span class="badge">Next.js</span>
+                <span class="badge">MongoDB</span>
+                <span class="badge">SQL (Fundamentals)</span>
+                <span class="badge">REST APIs & Axios</span>
+                <span class="badge">Power BI</span>
+                <span class="badge">Microsoft Excel</span>
+                <span class="badge">VS Code</span>
+                <span class="badge">Git & GitHub</span>
+                <span class="badge">Firefox Developer Edition</span>
+                <span class="badge">GSAP Animations</span>
+                <span class="badge">Figma (Familiar)</span>
+            </div>
+
+            <h3 class="gsap-reveal" style="color: var(--primary-color);">Cloud Analytics, Streaming & Machine Learning</h3>
+            <div class="badge-container gsap-reveal">
+                <span class="badge">Cloud Computing</span>
+                <span class="badge">Real-time Data Processing</span>
+                <span class="badge">Stream Processing</span>
+                <span class="badge">Apache Kafka</span>
+                <span class="badge">Apache Flink</span>
+                <span class="badge">Apache Spark (PySpark)</span>
+                <span class="badge">Amazon S3</span>
+                <span class="badge">Docker</span>
+                <span class="badge">Alpha Vantage API</span>
+                <span class="badge">Polygon.io API</span>
+                <span class="badge">Twelve Data API</span>
+                <span class="badge">LSTM</span>
+                <span class="badge">Random Forest</span>
+                <span class="badge">ARIMA</span>
+                <span class="badge">Support Vector Machine (SVM)</span>
+            </div>
+
+            <h3 class="gsap-reveal" style="color: var(--primary-color);">Power Skills & Professional Attributes</h3>
+            <div class="badge-container gsap-reveal">
+                <span class="badge">Leadership</span>
+                <span class="badge">Adaptability</span>
+                <span class="badge">Time Management</span>
+                <span class="badge">Team Management</span>
+            </div>
+        </section>
+
+        <hr>
+
+        <!-- Technical Projects Section -->
+        <section class="section" id="projects">
+            <h2 class="section-title gsap-reveal">Technical Projects</h2>
+            <div class="projects-grid">
+                
+                <div class="card gsap-reveal">
+                    <div>
+                        <h3>Intelligent Stock Analysis Dashboard</h3>
+                        <div class="subtitle">Cloud Analytics & ML Stream Processing Web App</div>
+                        <p>A cloud-based web application that collects real-time stock market data, analyzes market trends using machine learning algorithms (LSTM, Random Forest, ARIMA, SVM), and displays predictions through an interactive dashboard. Enables users to monitor performance and make data-driven investment decisions.</p>
+                        <div class="badge-container">
+                            <span class="badge">Python</span>
+                            <span class="badge">Apache Kafka</span>
+                            <span class="badge">Apache Flink</span>
+                            <span class="badge">PySpark</span>
+                            <span class="badge">Docker</span>
+                            <span class="badge">Alpha Vantage API</span>
+                        </div>
+                    </div>
+                    <a href="#" class="btn secondary-btn" style="margin-top: 1rem; text-align: center;">View Project Details</a>
+                </div>
+
+                <div class="card gsap-reveal">
+                    <div>
+                        <h3>Full Stack Fitness Application</h3>
+                        <div class="subtitle">BMI Health Engine & Multilingual App</div>
+                        <p>Engineered a BMI-based personalized diet and workout engine serving custom plans for 3 user body types with sub-2s response time. Scaled multilingual support to 20+ languages using i18n libraries. Built a social progress feed supporting image and video uploads.</p>
+                        <div class="badge-container">
+                            <span class="badge">Python</span>
+                            <span class="badge">JavaScript</span>
+                            <span class="badge">MongoDB</span>
+                            <span class="badge">REST API</span>
+                            <span class="badge">i18n</span>
+                        </div>
+                    </div>
+                    <a href="#" class="btn secondary-btn" style="margin-top: 1rem; text-align: center;">View Project Details</a>
+                </div>
+
+                <div class="card gsap-reveal">
+                    <div>
+                        <h3>Smart Travel Planner</h3>
+                        <div class="subtitle">Graph Routing & Fuel Cost Analytics</div>
+                        <p>Developed a shortest-route algorithm between destinations across 15+ test city pairs by implementing Dijkstra's logic in vanilla JavaScript. Reduced fuel cost estimation error to under 5% by building a dynamic calculator tied to live distance outputs and vehicle efficiency inputs.</p>
+                        <div class="badge-container">
+                            <span class="badge">HTML5</span>
+                            <span class="badge">CSS3</span>
+                            <span class="badge">JavaScript</span>
+                            <span class="badge">MongoDB</span>
+                            <span class="badge">Dijkstra's Algorithm</span>
+                        </div>
+                    </div>
+                    <a href="https://github.com/abhingi/Smart-Travel-Planner-frontend.git" target="_blank" class="btn secondary-btn" style="margin-top: 1rem; text-align: center;">View Repository</a>
+                </div>
+
+                <div class="card gsap-reveal">
+                    <div>
+                        <h3>E-Commerce Sales Dashboard</h3>
+                        <div class="subtitle">Power BI Data Analytics</div>
+                        <p>Built an interactive 8-KPI sales dashboard tracking revenue, churn, and category performance, achieving full stakeholder sign-off by structuring DAX measures and drill-through filters in Power BI.</p>
+                        <div class="badge-container">
+                            <span class="badge">Power BI</span>
+                            <span class="badge">Excel</span>
+                            <span class="badge">DAX</span>
+                            <span class="badge">Data Analytics</span>
+                        </div>
+                    </div>
+                    <a href="#" class="btn secondary-btn" style="margin-top: 1rem; text-align: center;">View Dashboard</a>
+                </div>
+
+            </div>
+
+            <div class="gsap-reveal" style="margin-top: 2rem; background: var(--card-bg); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.8); box-shadow: var(--white-glow-sm);">
+                <h4 style="color: var(--primary-color); margin-bottom: 0.5rem;">Other Works & Applications</h4>
+                <p style="color: var(--text-muted);">Personal Portfolio Website | TO-DO List App | E-Commerce Fitness Center UI | Company UI Showcase</p>
+            </div>
+        </section>
+
+        <hr>
+
+        <!-- Certifications Section -->
+        <section class="section" id="courses">
+            <h2 class="section-title gsap-reveal">Certifications & Training 🎓</h2>
+            <div class="table-container gsap-reveal">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Certification Program / Course Title</th>
+                            <th>Issuing Organization</th>
+                            <th>Year</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Dual Certification: AI/ML for Industry</td>
+                            <td>IIT Madras Pravartak + NSDC</td>
+                            <td>2026</td>
+                        </tr>
+                        <tr>
+                            <td>GenAI Powered Data Analytics</td>
+                            <td>Tata Global / Forage</td>
+                            <td>2025</td>
+                        </tr>
+                        <tr>
+                            <td>Website UI/UX Design using ChatGPT</td>
+                            <td>Simplilearn</td>
+                            <td>2025</td>
+                        </tr>
+                        <tr>
+                            <td>Data Analyst 101</td>
+                            <td>Simplilearn</td>
+                            <td>2025</td>
+                        </tr>
+                        <tr>
+                            <td>Data Structures using Python</td>
+                            <td>Udemy</td>
+                            <td>2025</td>
+                        </tr>
+                        <tr>
+                            <td>Complete Java Programming Bootcamp</td>
+                            <td>Udemy</td>
+                            <td>2024</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <hr>
+
+        <!-- Education & Activities Section -->
+        <section class="section" id="education">
+            <h2 class="section-title gsap-reveal">Education & Activities</h2>
+            <div class="projects-grid">
+                <div class="card gsap-reveal">
+                    <div>
+                        <h3>Academic Qualifications</h3>
+                        <br>
+                        <h4>Graphic Era Hill University</h4>
+                        <p>Bachelor of Technology in Computer Science and Engineering<br><small>Aug 2023 – Present | Uttarakhand, India</small></p>
+                        <br>
+                        <h4>Doon Presidency School</h4>
+                        <p>Intermediate (XII) - ISC Board<br><small>2022 – 2023 | Dehradun, Uttarakhand</small></p>
+                    </div>
+                </div>
+                <div class="card gsap-reveal">
+                    <div>
+                        <h3>Extra-Curricular Leadership & Activities</h3>
+                        <br>
+                        <ul>
+                            <li>Arm-Wrestling Club Committee Member & Event Organizer - Graphic Era Hill University.</li>
+                            <li>Active participant in university sports activities and inter-college hackathon competitions.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <hr>
+
+        <!-- Contact Section -->
+        <section class="section" id="contact">
+            <h2 class="section-title gsap-reveal">Get In Touch</h2>
+            
+            <div class="contact-info-box gsap-reveal">
+                <div><i class="fas fa-location-dot" style="color: var(--primary-color);"></i> Dehradun, Uttarakhand, India</div>
+                <div><i class="fas fa-phone" style="color: var(--primary-color);"></i> +91 7409013443</div>
+                <div><i class="fas fa-envelope" style="color: var(--primary-color);"></i> nabhi2265@gmail.com</div>
+            </div>
+
+            <form class="contact-form gsap-reveal" action="https://formsubmit.co/nabhi2265@gmail.com" method="POST">
+                <div class="form-group">
+                    <input type="text" name="name" placeholder="Your Name" required>
+                </div>
+                <div class="form-group">
+                    <input type="email" name="email" placeholder="Your Email" required>
+                </div>
+                <div class="form-group">
+                    <textarea name="message" placeholder="Your Message" rows="6" required></textarea>
+                </div>
+                <button type="submit" class="btn primary-btn">Send Message</button>
+            </form>
+            
+            <div class="social-links gsap-reveal">
+                <a href="https://linkedin.com/in/abhishek-negi" target="_blank"><i class="fab fa-linkedin"></i></a>
+                <a href="https://github.com/abhingi" target="_blank"><i class="fab fa-github"></i></a>
+                <a href="mailto:nabhi2265@gmail.com"><i class="fas fa-envelope"></i></a>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; Abhishek Negi. All Rights Reserved.</p>
+    </footer>
+
+    <!-- JS Logic for Compact Side Menu Toggle & GSAP Animations -->
+    <script>
+        // --- 0. Menu Toggle Interactivity ---
+        const menuToggle = document.getElementById('menuToggle');
+        const navMenu = document.getElementById('navMenu');
+        const menuIcon = document.getElementById('menuIcon');
+
+        menuToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            navMenu.classList.toggle('active');
+            if (navMenu.classList.contains('active')) {
+                menuIcon.className = 'fas fa-xmark';
+            } else {
+                menuIcon.className = 'fas fa-bars';
+            }
+        });
+
+        // Close side menu when clicking outside or clicking any nav link
+        document.addEventListener('click', (e) => {
+            if (!navMenu.contains(e.target) && !menuToggle.contains(e.target)) {
+                navMenu.classList.remove('active');
+                menuIcon.className = 'fas fa-bars';
+            }
+        });
+
+        document.querySelectorAll('.navbar a').forEach(link => {
+            link.addEventListener('click', () => {
+                navMenu.classList.remove('active');
+                menuIcon.className = 'fas fa-bars';
+            });
+        });
+
+        // --- 1. Background Particle Canvas Effect ---
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        const particles = [];
+        const particleCount = 45;
+
+        for (let i = 0; i < particleCount; i++) {
+            particles.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                radius: Math.random() * 3 + 1,
+                dx: (Math.random() - 0.5) * 0.6,
+                dy: (Math.random() - 0.5) * 0.6,
+                alpha: Math.random() * 0.4 + 0.2
+            });
+        }
+
+        function animateCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            particles.forEach(p => {
+                p.x += p.dx;
+                p.y += p.dy;
+
+                if (p.x < 0 || p.x > canvas.width) p.dx *= -1;
+                if (p.y < 0 || p.y > canvas.height) p.dy *= -1;
+
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(244, 63, 94, ${p.alpha})`;
+                ctx.shadowColor = '#ffffff';
+                ctx.shadowBlur = 8;
+                ctx.fill();
+            });
+
+            requestAnimationFrame(animateCanvas);
+        }
+        animateCanvas();
+
+        // --- 2. GSAP Animations & ScrollTrigger ---
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Header Landing Sequence
+        gsap.from('.header', {
+            y: -80,
+            opacity: 0,
+            duration: 1,
+            ease: 'power3.out'
+        });
+
+        // Hero Section Entry Animations
+        const heroTimeline = gsap.timeline();
+        heroTimeline
+            .from('.gsap-hero-title', { y: 30, opacity: 0, duration: 0.8, ease: 'power3.out' })
+            .from('.gsap-hero-subtitle', { y: 20, opacity: 0, duration: 0.6, ease: 'power3.out' }, '-=0.4')
+            .from('.gsap-hero-text', { y: 20, opacity: 0, duration: 0.6, ease: 'power3.out' }, '-=0.4')
+            .from('.gsap-hero-btn', { y: 20, opacity: 0, duration: 0.6, ease: 'power3.out' }, '-=0.4')
+            .from('.gsap-hero-img', { scale: 0.8, opacity: 0, duration: 0.8, ease: 'back.out(1.7)' }, '-=0.6');
+
+        // Scroll Trigger Animations for All Cards, Titles, and Elements
+        gsap.utils.toArray('.gsap-reveal').forEach((elem) => {
+            gsap.from(elem, {
+                scrollTrigger: {
+                    trigger: elem,
+                    start: 'top 85%',
+                    toggleActions: 'play none none none'
+                },
+                y: 40,
+                opacity: 0,
+                duration: 0.8,
+                ease: 'power3.out'
+            });
+        });
+    </script>
+</body>
+</html>
